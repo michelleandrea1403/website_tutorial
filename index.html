@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Arcade - Premium Real Estate</title>
+    <title>1인 가구 데이터</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         * {
@@ -60,6 +60,11 @@
 
         .nav-links a:hover {
             opacity: 0.6;
+        }
+
+        .nav-links a.active {
+            font-weight: 600;
+            border-bottom: 1px solid #1a1a1a;
         }
 
         .nav-right {
@@ -150,16 +155,17 @@
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
             transition: transform 0.5s ease;
+            height: 600px;
         }
 
-        #p5-canvas {
+        #graph-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 2;
-            pointer-events: none;
+            cursor: pointer;
             border-radius: 20px;
         }
 
@@ -359,8 +365,8 @@
     <nav class="navbar">
         <div class="logo">🏠</div>
         <ul class="nav-links">
-            <li><a href="#home">HOME</a></li>
-            <li><a href="#properties">PROPERTIES</a></li>
+            <li><a href="home.html">HOME</a></li>
+            <li><a href="index.html" class="active">PROPERTIES</a></li>
             <li><a href="#buy">BUY</a></li>
             <li><a href="#rent">RENT</a></li>
             <li><a href="#about">FIND AGENT</a></li>
@@ -375,16 +381,16 @@
     <section class="hero">
         <div class="stats">
             <div class="stat-item fade-in">
-                <div class="stat-number">10K</div>
-                <div class="stat-label">HAPPY CLIENTS</div>
+                <div class="stat-number">15.5%</div>
+                <div class="stat-label">2000년</div>
             </div>
             <div class="stat-item fade-in">
-                <div class="stat-number">5K</div>
-                <div class="stat-label">PROPERTIES SOLD</div>
+                <div class="stat-number">36.1%</div>
+                <div class="stat-label">2024년</div>
             </div>
             <div class="stat-item fade-in">
-                <div class="stat-number">15+</div>
-                <div class="stat-label">CITIES COVERED</div>
+                <div class="stat-number">24년 만에 2배</div>
+                <div class="stat-label">현황</div>
             </div>
         </div>
 
@@ -394,13 +400,12 @@
         </div>
 
         <h1 class="hero-title fade-in">
-            CITY<br>ARCADE
+            1인<br>가구<br>데이터
         </h1>
 
         <div class="hero-image-container fade-in">
-            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400" alt="Modern Architecture" class="hero-image">
-            <div id="p5-canvas"></div>
-            <div class="hero-caption">FUTURE OF LIVING<br>WITH CITY ARCADE</div>
+            <div id="graph-canvas"></div>
+            <div class="hero-caption">INTERACTIVE DATA VISUALIZATION<br>CLICK TO INCREASE VALUES</div>
         </div>
     </section>
 
@@ -509,129 +514,111 @@
     </script>
 
     <script>
-        // p5.js Interactive Visual
-        let particles = [];
-        let mouseX = 0;
-        let mouseY = 0;
-        let canvas;
+        // p5.js Interactive Flower
+        let h = 200;
+        let slider, slider1, slider2, slider3;
 
         function setup() {
-            const canvasContainer = document.getElementById('p5-canvas');
-            const rect = canvasContainer.getBoundingClientRect();
-            
-            canvas = createCanvas(rect.width, rect.height);
-            canvas.parent('p5-canvas');
-            
-            // Create initial particles
-            for (let i = 0; i < 50; i++) {
-                particles.push(new Particle());
-            }
+            // Wait a bit for the container to be properly sized
+            setTimeout(() => {
+                const canvasContainer = document.getElementById('graph-canvas');
+                const containerWidth = canvasContainer.offsetWidth;
+                const containerHeight = canvasContainer.offsetHeight;
+                
+                let canvas = createCanvas(containerWidth, containerHeight);
+                canvas.parent('graph-canvas');
+                
+                // Create sliders
+                slider = createSlider(0, 400, 200);
+                slider1 = createSlider(-180, 180, 0);
+                slider2 = createSlider(-90, 90, 0);
+                slider3 = createSlider(1, 2, 1, 0.01);
+                
+                // Position sliders
+                slider.position(20, 20);
+                slider1.position(20, 50);
+                slider2.position(20, 80);
+                slider3.position(20, 110);
+                
+                // Style sliders
+                slider.style('width', '200px');
+                slider1.style('width', '200px');
+                slider2.style('width', '200px');
+                slider3.style('width', '200px');
+            }, 100);
         }
 
         function draw() {
-            clear();
-            
-            // Update mouse position relative to canvas
-            const canvasContainer = document.getElementById('p5-canvas');
-            const rect = canvasContainer.getBoundingClientRect();
-            mouseX = mouseX - rect.left;
-            mouseY = mouseY - rect.top;
-            
-            // Update and draw particles
-            for (let particle of particles) {
-                particle.update();
-                particle.display();
+            if (slider) {
+                h = slider.value();
             }
+            flower(width/2, height - 50);
+        }
+
+        function flower(x, y) {
+            background(220);
             
-            // Draw connecting lines between nearby particles
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    let distance = dist(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
-                    if (distance < 100) {
-                        stroke(255, 255, 255, map(distance, 0, 100, 100, 0));
-                        strokeWeight(0.5);
-                        line(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
-                    }
+            push();
+                // 씨앗이 심겨진 위치
+                translate(x, y);
+                // swaying in the wind
+                let windAngle = slider2 ? slider2.value() : 0;
+                rotate(radians(windAngle));
+                let scaleValue = slider3 ? slider3.value() : 1;
+                scale(scaleValue);
+                
+                // 씨앗
+                fill(139, 69, 19);
+                ellipse(0, 0, 10, 10);
+                
+                // 줄기
+                stroke(34, 139, 34);
+                strokeWeight(8);
+                line(0, 0, 0, -h);
+                
+                // 잎파리 20
+                if (h > 20) {
+                    push();
+                        translate(0, -h/3);
+                        fill(34, 139, 34);
+                        noStroke();
+                        ellipse(-30, 0, 60, 30);
+                        ellipse(30, 0, 60, 30);
+                    pop();
                 }
-            }
+                
+                // 꽃 머리 50
+                if (h > 50) {
+                    push();
+                        translate(0, -h);
+                        let rotationAngle = slider1 ? slider1.value() : 0;
+                        rotate(radians(rotationAngle));
+                        // 변수 만들기
+                        let angle = 360/5;
+                        fill(255, 192, 203);
+                        noStroke();
+                        ellipse(0, -30, 30, 60);
+                        rotate(radians(angle));
+                        ellipse(0, -30, 30, 60);
+                        rotate(radians(angle));
+                        ellipse(0, -30, 30, 60);
+                        rotate(radians(angle));
+                        ellipse(0, -30, 30, 60);
+                        rotate(radians(angle));
+                        ellipse(0, -30, 30, 60);
+                        fill(255, 255, 0);
+                        ellipse(0, 0, 30, 30);
+                    pop();
+                }
+            pop();
         }
 
         function windowResized() {
-            const canvasContainer = document.getElementById('p5-canvas');
-            const rect = canvasContainer.getBoundingClientRect();
-            resizeCanvas(rect.width, rect.height);
+            const canvasContainer = document.getElementById('graph-canvas');
+            const containerWidth = canvasContainer.offsetWidth;
+            const containerHeight = canvasContainer.offsetHeight;
+            resizeCanvas(containerWidth, containerHeight);
         }
-
-        function mouseMoved() {
-            mouseX = mouseX;
-            mouseY = mouseY;
-        }
-
-        class Particle {
-            constructor() {
-                this.x = random(width);
-                this.y = random(height);
-                this.vx = random(-1, 1);
-                this.vy = random(-1, 1);
-                this.size = random(2, 6);
-                this.alpha = random(100, 200);
-                this.targetX = this.x;
-                this.targetY = this.y;
-            }
-
-            update() {
-                // Calculate distance to mouse
-                let distanceToMouse = dist(this.x, this.y, mouseX, mouseY);
-                
-                // If mouse is close, particles are attracted to it
-                if (distanceToMouse < 200) {
-                    let force = map(distanceToMouse, 0, 200, 0.1, 0.01);
-                    let angle = atan2(mouseY - this.y, mouseX - this.x);
-                    this.vx += cos(angle) * force;
-                    this.vy += sin(angle) * force;
-                } else {
-                    // Otherwise, move towards random target
-                    this.targetX += random(-2, 2);
-                    this.targetY += random(-2, 2);
-                    this.targetX = constrain(this.targetX, 0, width);
-                    this.targetY = constrain(this.targetY, 0, height);
-                    
-                    let angle = atan2(this.targetY - this.y, this.targetX - this.x);
-                    this.vx += cos(angle) * 0.02;
-                    this.vy += sin(angle) * 0.02;
-                }
-                
-                // Apply friction
-                this.vx *= 0.95;
-                this.vy *= 0.95;
-                
-                // Update position
-                this.x += this.vx;
-                this.y += this.vy;
-                
-                // Wrap around edges
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-                if (this.y < 0) this.y = height;
-                if (this.y > height) this.y = 0;
-            }
-
-            display() {
-                noStroke();
-                fill(255, 255, 255, this.alpha);
-                ellipse(this.x, this.y, this.size, this.size);
-                
-                // Add glow effect
-                fill(255, 255, 255, this.alpha * 0.3);
-                ellipse(this.x, this.y, this.size * 2, this.size * 2);
-            }
-        }
-
-        // Update mouse position on mouse move
-        document.addEventListener('mousemove', function(e) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
     </script>
 </body>
 </html>
