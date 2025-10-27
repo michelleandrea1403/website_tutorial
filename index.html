@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Arcade - Premium Real Estate</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f0;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: rgba(245, 245, 240, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 15px 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: #1a1a1a;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-icon, .signin-btn {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .signin-btn {
+            padding: 8px 20px;
+            border: 1px solid #1a1a1a;
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .signin-btn:hover {
+            background: #1a1a1a;
+            color: #f5f5f0;
+        }
+
+        .hero {
+            margin-top: 80px;
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-title {
+            font-size: 120px;
+            font-weight: 300;
+            line-height: 0.9;
+            margin-bottom: 40px;
+            letter-spacing: -3px;
+        }
+
+        .stats {
+            position: absolute;
+            right: 80px;
+            top: 200px;
+            text-align: right;
+        }
+
+        .stat-item {
+            margin-bottom: 30px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+
+        .agency-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border: 1px solid #1a1a1a;
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .agency-description {
+            max-width: 300px;
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .hero-image-container {
+            position: relative;
+            margin: 60px 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease;
+        }
+
+        #p5-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            border-radius: 20px;
+        }
+
+        .hero-image-container:hover {
+            transform: translateY(-10px);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-caption {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            color: white;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            text-align: center;
+            padding: 80px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tagline h2 {
+            font-size: 42px;
+            font-weight: 300;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .tagline p {
+            font-size: 32px;
+            font-weight: 300;
+            opacity: 0.5;
+            line-height: 1.4;
+        }
+
+        .features {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .feature-card.highlight {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .feature-description {
+            font-size: 12px;
+            opacity: 0.7;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        .arrow-icon {
+            float: right;
+            opacity: 0.5;
+        }
+
+        .feature-image {
+            border-radius: 15px;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #e8e8e0 0%, #d5d5ca 100%);
+            padding: 100px 60px;
+            margin: 80px 60px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cta-content h2 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .cta-btn {
+            padding: 15px 35px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cta-image {
+            max-width: 400px;
+        }
+
+        .cta-text {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 60px;
+            }
+            
+            .stats {
+                position: static;
+                margin-top: 40px;
+                text-align: left;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🏠</div>
+        <ul class="nav-links">
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#properties">PROPERTIES</a></li>
+            <li><a href="#buy">BUY</a></li>
+            <li><a href="#rent">RENT</a></li>
+            <li><a href="#about">FIND AGENT</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+        <div class="nav-right">
+            <div class="search-icon">🔍</div>
+            <div class="signin-btn">SIGN IN</div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="stats">
+            <div class="stat-item fade-in">
+                <div class="stat-number">10K</div>
+                <div class="stat-label">HAPPY CLIENTS</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">5K</div>
+                <div class="stat-label">PROPERTIES SOLD</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">CITIES COVERED</div>
+            </div>
+        </div>
+
+        <div class="agency-badge fade-in">BEST REAL ESTATE AGENCY</div>
+        <div class="agency-description fade-in">
+            LUXURY CITY ARCADE IS A LEADING PREMIUM PROPERTIES, AND INVEST WITH CONFIDENCE THROUGH CITY ARCADE'S MODERN DIGITAL MODERN REAL ESTATE.
+        </div>
+
+        <h1 class="hero-title fade-in">
+            CITY<br>ARCADE
+        </h1>
+
+        <div class="hero-image-container fade-in">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400" alt="Modern Architecture" class="hero-image">
+            <div id="p5-canvas"></div>
+            <div class="hero-caption">FUTURE OF LIVING<br>WITH CITY ARCADE</div>
+        </div>
+    </section>
+
+    <section class="tagline fade-in">
+        <h2>A MODERN REAL ESTATE PLATFORM,<br>CITY ARCADE INCORPORATES</h2>
+        <p>ADVANCED DIGITAL TOOLS AND TRUSTED<br>LOCAL EXPERTISE</p>
+    </section>
+
+    <section class="features">
+        <div class="feature-list">
+            <div class="feature-card fade-in">
+                <div class="feature-title">
+                    INSTANT PROPERTY SEARCH
+                    <span class="arrow-icon">↗</span>
+                </div>
+                <div class="feature-description">
+                    DISCOVER HOMES AND APARTMENTS<br>WITHIN JUST A FEW CLICKS
+                </div>
+            </div>
+
+            <div class="feature-card highlight fade-in">
+                <div class="feature-title">
+                    VERIFIED PRO LISTINGS
+                    <span class="arrow-icon">↗</span>
+                </div>
+                <div class="feature-description">
+                    100% VERIFIED AND UPDATED PROPERTY<br>DETAILS
+                </div>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-title">
+                    SMART INSIGHTS
+                    <span class="arrow-icon">↗</span>
+                </div>
+                <div class="feature-description">
+                    PERSONALIZED RECOMMENDATIONS TO<br>GROW YOUR WEALTH
+                </div>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-title">
+                    REAL TIME PROPERTY UPDATES
+                    <span class="arrow-icon">↗</span>
+                </div>
+                <div class="feature-description">
+                    GET INSTANT ALERTS ON NEW LISTINGS<br>AND PRICE CHANGES
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-image fade-in">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Modern Building">
+        </div>
+    </section>
+
+    <section class="cta-section fade-in">
+        <div class="cta-content">
+            <h2>WHY<br>CITYARCADE?</h2>
+            <p class="cta-text">STAY UPDATED WITH PROPERTY<br>VALUATIONS & TRENDS</p>
+            <button class="cta-btn">WHY CHOOSE US</button>
+        </div>
+        <div class="cta-image">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400" alt="Architecture Detail" style="border-radius: 20px; width: 100%;">
+        </div>
+    </section>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s ease';
+            observer.observe(el);
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // p5.js Interactive Visual
+        let particles = [];
+        let mouseX = 0;
+        let mouseY = 0;
+        let canvas;
+
+        function setup() {
+            const canvasContainer = document.getElementById('p5-canvas');
+            const rect = canvasContainer.getBoundingClientRect();
+            
+            canvas = createCanvas(rect.width, rect.height);
+            canvas.parent('p5-canvas');
+            
+            // Create initial particles
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function draw() {
+            clear();
+            
+            // Update mouse position relative to canvas
+            const canvasContainer = document.getElementById('p5-canvas');
+            const rect = canvasContainer.getBoundingClientRect();
+            mouseX = mouseX - rect.left;
+            mouseY = mouseY - rect.top;
+            
+            // Update and draw particles
+            for (let particle of particles) {
+                particle.update();
+                particle.display();
+            }
+            
+            // Draw connecting lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    let distance = dist(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                    if (distance < 100) {
+                        stroke(255, 255, 255, map(distance, 0, 100, 100, 0));
+                        strokeWeight(0.5);
+                        line(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                    }
+                }
+            }
+        }
+
+        function windowResized() {
+            const canvasContainer = document.getElementById('p5-canvas');
+            const rect = canvasContainer.getBoundingClientRect();
+            resizeCanvas(rect.width, rect.height);
+        }
+
+        function mouseMoved() {
+            mouseX = mouseX;
+            mouseY = mouseY;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = random(width);
+                this.y = random(height);
+                this.vx = random(-1, 1);
+                this.vy = random(-1, 1);
+                this.size = random(2, 6);
+                this.alpha = random(100, 200);
+                this.targetX = this.x;
+                this.targetY = this.y;
+            }
+
+            update() {
+                // Calculate distance to mouse
+                let distanceToMouse = dist(this.x, this.y, mouseX, mouseY);
+                
+                // If mouse is close, particles are attracted to it
+                if (distanceToMouse < 200) {
+                    let force = map(distanceToMouse, 0, 200, 0.1, 0.01);
+                    let angle = atan2(mouseY - this.y, mouseX - this.x);
+                    this.vx += cos(angle) * force;
+                    this.vy += sin(angle) * force;
+                } else {
+                    // Otherwise, move towards random target
+                    this.targetX += random(-2, 2);
+                    this.targetY += random(-2, 2);
+                    this.targetX = constrain(this.targetX, 0, width);
+                    this.targetY = constrain(this.targetY, 0, height);
+                    
+                    let angle = atan2(this.targetY - this.y, this.targetX - this.x);
+                    this.vx += cos(angle) * 0.02;
+                    this.vy += sin(angle) * 0.02;
+                }
+                
+                // Apply friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Wrap around edges
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            display() {
+                noStroke();
+                fill(255, 255, 255, this.alpha);
+                ellipse(this.x, this.y, this.size, this.size);
+                
+                // Add glow effect
+                fill(255, 255, 255, this.alpha * 0.3);
+                ellipse(this.x, this.y, this.size * 2, this.size * 2);
+            }
+        }
+
+        // Update mouse position on mouse move
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+    </script>
+</body>
+</html>
+
