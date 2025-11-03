@@ -519,38 +519,75 @@
         let slider, slider1, slider2, slider3;
 
         function setup() {
-            // Wait a bit for the container to be properly sized
-            setTimeout(() => {
-                const canvasContainer = document.getElementById('graph-canvas');
-                const containerWidth = canvasContainer.offsetWidth;
-                const containerHeight = canvasContainer.offsetHeight;
-                
-                let canvas = createCanvas(containerWidth, containerHeight);
-                canvas.parent('graph-canvas');
-                
-                // Create sliders
-                slider = createSlider(0, 400, 200);
-                slider1 = createSlider(-180, 180, 0);
-                slider2 = createSlider(-90, 90, 0);
-                slider3 = createSlider(1, 2, 1, 0.01);
-                
-                // Position sliders
-                slider.position(20, 20);
-                slider1.position(20, 50);
-                slider2.position(20, 80);
-                slider3.position(20, 110);
-                
-                // Style sliders
-                slider.style('width', '200px');
-                slider1.style('width', '200px');
-                slider2.style('width', '200px');
-                slider3.style('width', '200px');
-            }, 100);
+            const canvasContainer = document.getElementById('graph-canvas');
+            const containerWidth = canvasContainer.offsetWidth;
+            const containerHeight = canvasContainer.offsetHeight;
+            
+            let canvas = createCanvas(containerWidth, containerHeight);
+            canvas.parent('graph-canvas');
+            
+            // Create sliders
+            slider = createSlider(0, 400, 200);
+            slider1 = createSlider(-180, 180, 0);
+            slider2 = createSlider(-90, 90, 0);
+            slider3 = createSlider(1, 2, 1, 0.01);
+            
+            // Position sliders on the right side, moved down by 550px total
+            let flowerY = containerHeight - 50; // Same Y position as the flower
+            slider.position(containerWidth - 220, flowerY - 100 + 550);
+            slider1.position(containerWidth - 220, flowerY - 70 + 550);
+            slider2.position(containerWidth - 220, flowerY - 40 + 550);
+            slider3.position(containerWidth - 220, flowerY - 10 + 550);
+            
+            // Style sliders
+            slider.style('width', '200px');
+            slider.style('position', 'absolute');
+            slider.style('z-index', '1000');
+            slider1.style('width', '200px');
+            slider1.style('position', 'absolute');
+            slider1.style('z-index', '1000');
+            slider2.style('width', '200px');
+            slider2.style('position', 'absolute');
+            slider2.style('z-index', '1000');
+            slider3.style('width', '200px');
+            slider3.style('position', 'absolute');
+            slider3.style('z-index', '1000');
+            
+            // Add labels positioned next to sliders, moved down by 550px total
+            let heightLabel = createP('Height:');
+            heightLabel.position(containerWidth - 220, flowerY - 115 + 550);
+            heightLabel.style('color', 'white');
+            heightLabel.style('font-size', '12px');
+            heightLabel.style('margin', '0');
+            heightLabel.style('z-index', '1000');
+            
+            let rotationLabel = createP('Rotation:');
+            rotationLabel.position(containerWidth - 220, flowerY - 85 + 550);
+            rotationLabel.style('color', 'white');
+            rotationLabel.style('font-size', '12px');
+            rotationLabel.style('margin', '0');
+            rotationLabel.style('z-index', '1000');
+            
+            let windLabel = createP('Wind:');
+            windLabel.position(containerWidth - 220, flowerY - 55 + 550);
+            windLabel.style('color', 'white');
+            windLabel.style('font-size', '12px');
+            windLabel.style('margin', '0');
+            windLabel.style('z-index', '1000');
+            
+            let scaleLabel = createP('Scale:');
+            scaleLabel.position(containerWidth - 220, flowerY - 25 + 550);
+            scaleLabel.style('color', 'white');
+            scaleLabel.style('font-size', '12px');
+            scaleLabel.style('margin', '0');
+            scaleLabel.style('z-index', '1000');
         }
 
         function draw() {
             if (slider) {
                 h = slider.value();
+            } else {
+                h = 200; // Default height if slider not ready
             }
             flower(width/2, height - 50);
         }
