@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1인 가구 데이터</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -64,7 +63,7 @@
 
         .nav-links a.active {
             font-weight: 600;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 0px solid #1a1a1a;
         }
 
         .nav-right {
@@ -102,7 +101,7 @@
         .hero-title {
             font-size: 120px;
             font-weight: 300;
-            line-height: 0.9;
+            line-height: 1.1;
             margin-bottom: 40px;
             letter-spacing: -3px;
         }
@@ -125,7 +124,7 @@
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 13px;
             letter-spacing: 1px;
             opacity: 0.6;
         }
@@ -135,15 +134,15 @@
             padding: 8px 20px;
             border: 1px solid #1a1a1a;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 13px;
             letter-spacing: 1px;
             margin-bottom: 30px;
         }
 
         .agency-description {
             max-width: 300px;
-            font-size: 13px;
-            line-height: 1.6;
+            font-size: 16px;
+            line-height: 1.7;
             opacity: 0.8;
             margin-bottom: 40px;
         }
@@ -158,15 +157,13 @@
             height: 600px;
         }
 
-        #graph-canvas {
+        .hero-video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2;
-            cursor: pointer;
-            border-radius: 20px;
+            object-fit: cover;
         }
 
         .hero-image-container:hover {
@@ -364,13 +361,11 @@
 <body>
     <nav class="navbar">
         <div class="logo">🏠</div>
-        <ul class="nav-links">
-            <li><a href="home.html">HOME</a></li>
-            <li><a href="index.html" class="active">PROPERTIES</a></li>
-            <li><a href="datavisual.html">BUY</a></li>
-            <li><a href="#rent">RENT</a></li>
-            <li><a href="#about">FIND AGENT</a></li>
-            <li><a href="#contact">CONTACT</a></li>
+        <ul class="nav-links"> 
+            <li><a href="index.html" class="active">HOME</a></li>
+            <li><a href="home.html">VIDEO</a></li>
+            <li><a href="datavisual.html">DATA VISUALIZATION</a></li>
+
         </ul>
         <div class="nav-right">
             <div class="search-icon">🔍</div>
@@ -394,9 +389,9 @@
             </div>
         </div>
 
-        <div class="agency-badge fade-in">BEST REAL ESTATE AGENCY</div>
+        <div class="agency-badge fade-in">1인가구 현황</div>
         <div class="agency-description fade-in">
-            LUXURY CITY ARCADE IS A LEADING PREMIUM PROPERTIES, AND INVEST WITH CONFIDENCE THROUGH CITY ARCADE'S MODERN DIGITAL MODERN REAL ESTATE.
+            이 웹사이트를 통해 1인가구 현황과 미래의 1인가구 전망을 확인할 수 있습니다.
         </div>
 
         <h1 class="hero-title fade-in">
@@ -404,14 +399,17 @@
         </h1>
 
         <div class="hero-image-container fade-in">
-            <div id="graph-canvas"></div>
-            <div class="hero-caption">INTERACTIVE DATA VISUALIZATION<br>CLICK TO INCREASE VALUES</div>
+            <video class="hero-video" autoplay muted loop playsinline controls>
+                <source src="1020_인공지능시각화 과제.mp4" type="video/mp4">
+                브라우저가 비디오를 지원하지 않습니다.
+            </video>
+            <div class="hero-caption">2050년, 미래에서 온 메시지</div>
         </div>
     </section>
 
     <section class="tagline fade-in">
-        <h2>A MODERN REAL ESTATE PLATFORM,<br>CITY ARCADE INCORPORATES</h2>
-        <p>ADVANCED DIGITAL TOOLS AND TRUSTED<br>LOCAL EXPERTISE</p>
+        <h2>한국의 1인 가구 비중은 지속적으로 증가하고 있습니다.</h2>
+        <p>이는 도시구조, 주거 정책, 소비 트렌드 등 다양한 영역에 영향을 미치고 있습니다. <br>이러한 변화는 개인 중심의 생활 방식이 사회 전반에 확산되고 있음을 보여줍니다.</p>
     </section>
 
     <section class="features">
@@ -511,151 +509,6 @@
                 }
             });
         });
-    </script>
-
-    <script>
-        // p5.js Interactive Flower
-        let h = 200;
-        let slider, slider1, slider2, slider3;
-
-        function setup() {
-            const canvasContainer = document.getElementById('graph-canvas');
-            const containerWidth = canvasContainer.offsetWidth;
-            const containerHeight = canvasContainer.offsetHeight;
-            
-            let canvas = createCanvas(containerWidth, containerHeight);
-            canvas.parent('graph-canvas');
-            
-            // Create sliders
-            slider = createSlider(0, 400, 200);
-            slider1 = createSlider(-180, 180, 0);
-            slider2 = createSlider(-90, 90, 0);
-            slider3 = createSlider(1, 2, 1, 0.01);
-            
-            // Position sliders on the right side, moved down by 550px total
-            let flowerY = containerHeight - 50; // Same Y position as the flower
-            slider.position(containerWidth - 220, flowerY - 100 + 550);
-            slider1.position(containerWidth - 220, flowerY - 70 + 550);
-            slider2.position(containerWidth - 220, flowerY - 40 + 550);
-            slider3.position(containerWidth - 220, flowerY - 10 + 550);
-            
-            // Style sliders
-            slider.style('width', '200px');
-            slider.style('position', 'absolute');
-            slider.style('z-index', '1000');
-            slider1.style('width', '200px');
-            slider1.style('position', 'absolute');
-            slider1.style('z-index', '1000');
-            slider2.style('width', '200px');
-            slider2.style('position', 'absolute');
-            slider2.style('z-index', '1000');
-            slider3.style('width', '200px');
-            slider3.style('position', 'absolute');
-            slider3.style('z-index', '1000');
-            
-            // Add labels positioned next to sliders, moved down by 550px total
-            let heightLabel = createP('Height:');
-            heightLabel.position(containerWidth - 220, flowerY - 115 + 550);
-            heightLabel.style('color', 'white');
-            heightLabel.style('font-size', '12px');
-            heightLabel.style('margin', '0');
-            heightLabel.style('z-index', '1000');
-            
-            let rotationLabel = createP('Rotation:');
-            rotationLabel.position(containerWidth - 220, flowerY - 85 + 550);
-            rotationLabel.style('color', 'white');
-            rotationLabel.style('font-size', '12px');
-            rotationLabel.style('margin', '0');
-            rotationLabel.style('z-index', '1000');
-            
-            let windLabel = createP('Wind:');
-            windLabel.position(containerWidth - 220, flowerY - 55 + 550);
-            windLabel.style('color', 'white');
-            windLabel.style('font-size', '12px');
-            windLabel.style('margin', '0');
-            windLabel.style('z-index', '1000');
-            
-            let scaleLabel = createP('Scale:');
-            scaleLabel.position(containerWidth - 220, flowerY - 25 + 550);
-            scaleLabel.style('color', 'white');
-            scaleLabel.style('font-size', '12px');
-            scaleLabel.style('margin', '0');
-            scaleLabel.style('z-index', '1000');
-        }
-
-        function draw() {
-            if (slider) {
-                h = slider.value();
-            } else {
-                h = 200; // Default height if slider not ready
-            }
-            flower(width/2, height - 50);
-        }
-
-        function flower(x, y) {
-            background(220);
-            
-            push();
-                // 씨앗이 심겨진 위치
-                translate(x, y);
-                // swaying in the wind
-                let windAngle = slider2 ? slider2.value() : 0;
-                rotate(radians(windAngle));
-                let scaleValue = slider3 ? slider3.value() : 1;
-                scale(scaleValue);
-                
-                // 씨앗
-                fill(139, 69, 19);
-                ellipse(0, 0, 10, 10);
-                
-                // 줄기
-                stroke(34, 139, 34);
-                strokeWeight(8);
-                line(0, 0, 0, -h);
-                
-                // 잎파리 20
-                if (h > 20) {
-                    push();
-                        translate(0, -h/3);
-                        fill(34, 139, 34);
-                        noStroke();
-                        ellipse(-30, 0, 60, 30);
-                        ellipse(30, 0, 60, 30);
-                    pop();
-                }
-                
-                // 꽃 머리 50
-                if (h > 50) {
-                    push();
-                        translate(0, -h);
-                        let rotationAngle = slider1 ? slider1.value() : 0;
-                        rotate(radians(rotationAngle));
-                        // 변수 만들기
-                        let angle = 360/5;
-                        fill(255, 192, 203);
-                        noStroke();
-                        ellipse(0, -30, 30, 60);
-                        rotate(radians(angle));
-                        ellipse(0, -30, 30, 60);
-                        rotate(radians(angle));
-                        ellipse(0, -30, 30, 60);
-                        rotate(radians(angle));
-                        ellipse(0, -30, 30, 60);
-                        rotate(radians(angle));
-                        ellipse(0, -30, 30, 60);
-                        fill(255, 255, 0);
-                        ellipse(0, 0, 30, 30);
-                    pop();
-                }
-            pop();
-        }
-
-        function windowResized() {
-            const canvasContainer = document.getElementById('graph-canvas');
-            const containerWidth = canvasContainer.offsetWidth;
-            const containerHeight = canvasContainer.offsetHeight;
-            resizeCanvas(containerWidth, containerHeight);
-        }
     </script>
 </body>
 </html>
